@@ -22,7 +22,7 @@ class Token(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     access_token: SecretStr
-    token_type: Literal["bearer"] = "bearer"
+    token_type: Literal['bearer'] = 'bearer'
 
     @field_serializer('access_token')
     def reveal(self, access_token : SecretStr) -> str:
@@ -68,13 +68,13 @@ class Tokenizer:
         return Token(access_token = encoded_token, token_type = 'bearer')
 
     @classmethod
-    def decode(cls, token : Token) -> Dict:
+    def decode(cls, token : Token) -> Claim:
         try:
             decoded_token = jwt.decode(token.access_token.get_secret_value(), cls.secret.get_secret_value(), algorithms = ['HS256'])
-            return decoded_token
+            return Claim(**decoded_token)
         
         except ExpiredSignatureError:
-            raise exceptions.TokenError
+            raise exceptions.TokenExpired
         
         except JWTError:
             raise exceptions.TokenError

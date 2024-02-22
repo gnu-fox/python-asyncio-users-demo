@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from src.users.auth.models.accounts import Account
 from src.users.auth.models.credentials import Credential
 from src.users.auth.ports import Accounts

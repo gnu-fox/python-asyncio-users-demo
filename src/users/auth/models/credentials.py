@@ -11,7 +11,7 @@ from pydantic import field_serializer, field_validator
 from src.users.auth.models.security import Security
 
 class Credential(BaseModel):
-    id : UUID = Field(..., alias="id", description="The UUID of the Account")
+    id : UUID = Field(default=None, alias="id", description="The UUID of the Account")
     username : str = Field(default=None, alias="username", description="The username of the Account")
     email : EmailStr = Field(default=None, alias="email", description="The email of the Account")
     password : SecretStr = Field(default=None, alias="password", description="The password of the Account")
