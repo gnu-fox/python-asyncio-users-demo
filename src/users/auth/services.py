@@ -25,6 +25,19 @@ async def authenticate(credential : Credential, accounts : Accounts) -> Account:
     
 
 async def register(credential : Credential, accounts : Accounts):
+    if credential.username:
+        retrieved = await accounts.credentials.read(username=credential.username)
+    elif credential.email:
+        retrieved = await accounts.credentials.read(email=credential.email)
+    else:
+        raise exceptions.InvalidCredential
+    
+    if retrieved:
+        raise exceptions.AccountAlreadyExists
+    
+    if not credential.password:
+        raise exceptions.InvalidCredential
+        
     credential.generate_id()
     credential.hash()    
     async with accounts:
