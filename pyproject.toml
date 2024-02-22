@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "python-asyncio-users-demo"
+version = "0.1.0"
+description = "Asynchronous user managment for python"
+authors = ["ericcardozo <eric.m.cardozo@mi.unc.edu.ar>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = "^2.6.1"
+
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^8.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
