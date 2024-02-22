@@ -1,31 +1,35 @@
-from typing import Union
-from uuid import UUID
+import uuid
+from typing import Set
+from src.users.auth.models.credentials import Credential
 
-from pydantic import BaseModel
-from pydantic import Field
-from pydantic import SecretStr
-from pydantic import EmailStr
-from pydantic import field_serializer, field_validator
+class Session:
+    existing = Credential(id=uuid.uuid4(), username="admin", email="admin@gmail.com", password="password").hash()
 
-from src.users.auth.models.security import Security
+    _credentials : Set[Credential] = set()
+    _credentials.add(existing)
 
-class Credential(BaseModel):
-    id : UUID = Field(default=None, alias="id", description="The UUID of the Account")
-    username : str = Field(default=None, alias="username", description="The username of the Account")
-    password : SecretStr = Field(default=None, alias="password", description="The password of the Account")
-    email : EmailStr = Field(default=None, alias="email", description="The email of the Account")
+    def __init__(self):
+        self.credentials : Set[Credential] = self._credentials.copy()
+        for credential in self.credentials:
+            print(credential)
 
-    @field_serializer('password', when_used='always')
-    def reveal(password : SecretStr) -> str:
-        return password.get_secret_value()
-    
-    def hash_secrets(self):
-        self.password = Security.hash(self.password)
+    async def begin(self):
+        pass
 
-    def verify_password(self, password : Union[str, SecretStr]) -> bool:
-        return Security.verify(password, self.password)
-    
-credentials = Credential(username="username", password="password")
-credentials.id = UUID("00000000-0000-0000-0000-000000000000")
+    @classmethod
+    async def commit(self):
+        self._credentials.update(self.credentials)
 
-print(credentials)
+    async def rollback(self):
+        self.credentials.clear()
+
+    async def close(self):
+        self.credentials.clear()
+        
+async def main():
+    session = Session()
+    print(session.credentials)
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())

@@ -28,3 +28,12 @@ class Credential(BaseModel):
     
     def generate_id(self):
         self.id = uuid4()
+
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, self.__class__):
+            if self.id and __value.id:
+                return self.id == __value.id
+        return False
+    
+    def __hash__(self) -> int:
+        return hash(self.id)
