@@ -7,14 +7,15 @@ from typing import List
 from typing import Union
 from collections import deque
 
+from src.users.settings import Settings
 from src.users.models import Event, Command
 from src.users.models import User, Account
-from src.users.repository import Repository
+from src.users.ports import Repository
 from src.users import events
 from src.users import commands
 from src.users import handlers
 
-from src.users.auth.ports import Accounts
+from src.users.auth.protocols import Accounts
 from src.adapters.mock.units_of_work import MockAccountsFactory
 
 class Application:
@@ -56,18 +57,21 @@ class Factory(ABC, Generic[T]):
         pass
 
 
+def create_accounts_uow(settings : Settings) -> Accounts:
+    return settings.accounts_backend(**settings.accounts_backend_args)
+
 class Users:
     repository : Repository[User] = Repository(collection=set())
 
-    def __init__(self, factory : Factory[Accounts] = MockAccountsFactory()):
-        self.factory = factory
+    def __init__(self, settings : Settings):
+        self.settings = settings
         self.collection = self.repository.collection
         self.application : Application = Application(repository=self.repository)
         self.application.publishers[commands.StartApplication] = handlers.Start()
-        self.application.consumers[events.UserCreated] = [handlers.CreateAccount(accounts=factory.create())]
+        self.application.consumers[events.UserCreated] = [handlers.CreateAccount(accounts=create_accounts_uow(settings))]
 
     async def __aenter__(self):
-        self.accounts = self.factory.create()
+        self.accounts = create_accounts_uow(self.settings)
         await self.accounts.__aenter__()
         return self
     

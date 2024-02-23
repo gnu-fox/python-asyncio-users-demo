@@ -1,8 +1,13 @@
+import logging
+
 from src.adapters.mock.sessions import Session
 from src.users.auth.models.credentials import Credential
-from src.users.auth.ports import Credentials
+from src.users.ports import Credentials
 
-class MockCredentials:
+LOGGER = logging.getLogger(__name__)
+
+
+class MockCredentials(Credentials):
     def __init__(self, session : Session):
         self.session = session
 
@@ -10,6 +15,7 @@ class MockCredentials:
         self.session.credentials.add(credential)
 
     async def read(self, **kwargs):
+        LOGGER.info(f'Reading credentials with kwargs: {kwargs}')
         for credential in self.session.credentials:
             if all(getattr(credential, key) == value for key, value in kwargs.items()):
                 return credential

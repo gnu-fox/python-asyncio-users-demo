@@ -26,10 +26,3 @@ class Settings(BaseSettings):
         elif values['database_uri']:
             raise NotImplementedError
         return values
-
-    def create_accounts_uow(self) -> Accounts:
-        return self.accounts_backend(**self.accounts_backend_args)
-        
-settings = Settings(mock=True)
-
-print(settings.create_accounts_uow())

@@ -31,7 +31,7 @@ class User:
         self.saved = True
 
     @property
-    def id(self):
+    def id(self) -> UUID:
         return self.account.id
     
     def __eq__(self, __value: object) -> bool:

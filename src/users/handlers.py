@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from src.users.models import Event, Command
 from src.users.auth.models.credentials import Credential
-from src.users.auth.ports import Accounts
+from src.users.auth.protocols import Accounts
 from src.users.auth import services as auth
 from src.users import events, commands
 
@@ -15,7 +15,6 @@ class Handler(ABC, Generic[T]):
     @abstractmethod
     async def __call__(self, message : T):
         pass
-
 
 class CreateAccount(Handler[events.UserCreated]):
     def __init__(self, accounts : Accounts):

@@ -8,7 +8,7 @@ from src.adapters.mock.units_of_work import MockAccounts
 
 from src.users.auth.models.credentials import Credential
 from src.users.auth.models.security import Security
-from src.users.auth.ports import Accounts
+from src.users.auth.protocols import Accounts
 from src.users.auth import services
 from src.users.auth import exceptions
 

@@ -1,6 +1,6 @@
 from src.users.auth.models.accounts import Account
 from src.users.auth.models.credentials import Credential
-from src.users.auth.ports import Accounts
+from src.users.auth.protocols import Accounts
 from src.users.auth import exceptions
 
 async def authenticate(credential : Credential, accounts : Accounts) -> Account:
