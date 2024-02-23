@@ -5,6 +5,7 @@ from typing import Any
 
 from src.users.auth.models.credentials import Credential
 
+
 class Credentials(ABC):
 
     @abstractmethod

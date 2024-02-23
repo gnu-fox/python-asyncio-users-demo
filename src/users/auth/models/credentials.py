@@ -17,10 +17,10 @@ class Credential(BaseModel):
     password : SecretStr = Field(default=None, alias="password", description="The password of the Account")
 
     @field_serializer('password', when_used='always')
-    def reveal(password : SecretStr) -> str:
-        return password.get_secret_value()
+    def reveal(secret : SecretStr) -> str:
+        return secret.get_secret_value()
     
-    def hash(self):
+    def hash_password(self):
         self.password = Security.hash(self.password)
 
     def verify_password(self, password : Union[str, SecretStr]) -> bool:

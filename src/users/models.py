@@ -1,11 +1,14 @@
 from uuid import uuid4
 from uuid import UUID
 from datetime import datetime
+from typing import Deque
+from collections import deque
 
 from pydantic import BaseModel
 from pydantic import Field
 
 from src.users.auth.models.accounts import Account
+from src.users.auth.models.credentials import Credential
 
 class Metadata(BaseModel):
     type : str = Field(description="The type of message.")
@@ -21,6 +24,11 @@ class Command(BaseModel):
 class User:
     def __init__(self, account : Account):
         self.account = account
+        self.events : Deque[Event] = deque()
+        self.saved = False
+
+    def save(self):
+        self.saved = True
 
     @property
     def id(self):

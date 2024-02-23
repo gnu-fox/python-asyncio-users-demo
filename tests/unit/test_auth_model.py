@@ -52,3 +52,9 @@ def test_tokenizer():
 
     with pytest.raises(exceptions.TokenExpired):
         Tokenizer.decode(token)
+
+def test_credential():
+    LOGGER.info("Testing Credential")
+
+    credential = Credential(id=uuid.uuid4(), username="admin", email="admin@gmail.com", password="admin")
+    assert credential.id
