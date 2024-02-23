@@ -9,10 +9,10 @@ from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 from src.users.ports import Accounts
-from src.adapters.mock.units_of_work import MockAccounts
+from src.users.mocks.units_of_work import MockAccounts
 
 class Settings(BaseSettings):
-    mock : bool = False
+    test : bool = False
     database_uri: Union[str, None] = Field(None, description="The URI of the database.")
     accounts_backend: Type
     accounts_backend_args: Dict    
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     @model_validator(mode='before')
     @classmethod
     def generate_backend(cls, values):
-        if values['mock']:
+        if values['test']:
             values['accounts_backend'] = MockAccounts
             values['accounts_backend_args'] = {}
         elif values['database_uri']:

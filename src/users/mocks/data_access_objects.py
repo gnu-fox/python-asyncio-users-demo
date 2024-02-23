@@ -1,6 +1,6 @@
 import logging
 
-from src.adapters.mock.sessions import Session
+from src.users.mocks.database_session import Session
 from src.users.auth.models.credentials import Credential
 from src.users.ports import Credentials
 

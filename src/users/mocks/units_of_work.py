@@ -1,5 +1,5 @@
-from src.adapters.mock.sessions import Session
-from src.adapters.mock.data_access_objects import MockCredentials
+from src.users.mocks.database_session import Session
+from src.users.mocks.data_access_objects import MockCredentials
 
 class MockAccounts:
 
@@ -14,9 +14,3 @@ class MockAccounts:
 
     async def commit(self):
         await self.session.commit()
-
-
-class MockAccountsFactory:
-
-    def create(self):
-        return MockAccounts()

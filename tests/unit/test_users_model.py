@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture
 def settings():
-    return Settings(mock=True)
+    return Settings(test=True)
 
 @pytest.mark.asyncio
 async def test_users(settings : Settings):
@@ -23,15 +23,16 @@ async def test_users(settings : Settings):
     user_id = user.id
     LOGGER.info(f'Created user with id: {user_id}')
 
-    async with Users(settings=settings) as users:
+    users = Users(settings=settings)
+    async with users:
         user = await users.read(username = 'test')
         LOGGER.info(f'Retrieved user with id: {user.id} of type: {type(user.id)}')
         assert user
 
-    async with Users(settings=settings) as users:
+    async with users:
         user = await users.read(id = user.id)
         assert user
 
-    async with Users(settings=settings) as users:
+    async with users:
         user = await users.read(username = 'test22')
         assert not user

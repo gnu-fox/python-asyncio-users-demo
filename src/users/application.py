@@ -14,9 +14,7 @@ from src.users.ports import Repository
 from src.users import events
 from src.users import commands
 from src.users import handlers
-
 from src.users.auth.protocols import Accounts
-from src.adapters.mock.units_of_work import MockAccountsFactory
 
 class Application:
     def __init__(self, repository : Repository):

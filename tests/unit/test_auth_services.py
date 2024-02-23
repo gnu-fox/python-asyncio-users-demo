@@ -3,8 +3,8 @@ import uuid
 import logging
 from typing import Generator
 
-from src.adapters.mock.sessions import Session
-from src.adapters.mock.units_of_work import MockAccounts
+from src.users.mocks.database_session import Session
+from src.users.mocks.units_of_work import MockAccounts
 
 from src.users.auth.models.credentials import Credential
 from src.users.auth.models.security import Security
