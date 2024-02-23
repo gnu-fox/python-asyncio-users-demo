@@ -14,3 +14,9 @@ class MockAccounts:
 
     async def commit(self):
         await self.session.commit()
+
+
+class MockAccountsFactory:
+
+    def create(self):
+        return MockAccounts()

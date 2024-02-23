@@ -12,18 +12,19 @@ from src.users.auth.ports import Accounts
 from src.users.auth import services
 from src.users.auth import exceptions
 
-
 LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture
 def accounts() -> Generator[Accounts, None, None]:
     yield MockAccounts()
 
+
 @pytest.mark.asyncio
 async def test_accounts(accounts : Accounts):
     async with accounts:
         credential = await accounts.credentials.read(username="admin")
         assert credential.username == "admin"
+
 
 @pytest.mark.asyncio
 async def test_register(accounts : Accounts):
@@ -44,6 +45,7 @@ async def test_register(accounts : Accounts):
         retrieved = await accounts.credentials.read(username="test")
         assert retrieved.username == "test"
         assert Security.verify("test", retrieved.password) == True
+
 
 @pytest.mark.asyncio
 async def test_authenticate(accounts : Accounts):

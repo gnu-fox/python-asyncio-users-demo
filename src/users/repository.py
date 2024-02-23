@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Set
 from typing import Generator
 from typing import Protocol

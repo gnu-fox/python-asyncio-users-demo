@@ -6,7 +6,7 @@ from src.users.models import Event, Command
 from src.users.auth.models.credentials import Credential
 from src.users.auth.ports import Accounts
 from src.users.auth import services as auth
-from src.users import events
+from src.users import events, commands
 
 
 T = TypeVar('T', bound=Union[Event, Command])
@@ -24,3 +24,8 @@ class CreateAccount(Handler[events.UserCreated]):
     async def __call__(self, event : events.UserCreated):
         credential = Credential(**event.model_dump())
         await auth.register(credential=credential, accounts=self.accounts)
+
+
+class Start(Handler[commands.StartApplication]):
+    async def __call__(self, command : commands.StartApplication):
+        pass

@@ -1,5 +1,6 @@
 import uuid
-from typing import Type
+from abc import ABC, abstractmethod
+from typing import TypeVar, Generic
 from typing import Dict
 from typing import Callable
 from typing import List
@@ -14,6 +15,7 @@ from src.users import commands
 from src.users import handlers
 
 from src.users.auth.ports import Accounts
+from src.adapters.mock.units_of_work import MockAccountsFactory
 
 class Application:
     def __init__(self, repository : Repository):
@@ -46,20 +48,33 @@ class Application:
             except Exception:
                 continue
 
+T = TypeVar('T')
+class Factory(ABC, Generic[T]):
+
+    @abstractmethod
+    def create(self) -> T:
+        pass
+
 
 class Users:
     repository : Repository[User] = Repository(collection=set())
-    def __init__(self):
+
+    def __init__(self, factory : Factory[Accounts] = MockAccountsFactory()):
+        self.factory = factory
         self.collection = self.repository.collection
         self.application : Application = Application(repository=self.repository)
+        self.application.publishers[commands.StartApplication] = handlers.Start()
+        self.application.consumers[events.UserCreated] = [handlers.CreateAccount(accounts=factory.create())]
 
     async def __aenter__(self):
-        self.application.consumers[events.UserCreated] = [handlers.CreateAccount(accounts=...)]
+        self.accounts = self.factory.create()
+        await self.accounts.__aenter__()
         return self
     
     async def __aexit__(self, exc_type, exc_value, traceback):
         self.application.queue.extend(self.repository.collect_events())
         await self.application.handle(commands.StartApplication())
+        await self.accounts.__aexit__(exc_type, exc_value, traceback)
 
     async def create(self, **kwargs) -> User:
         account = Account(id = uuid.uuid4())
@@ -67,3 +82,11 @@ class Users:
         user.events.append(events.UserCreated(**kwargs))
         self.collection.add(user)
         return user
+    
+    async def read(self, **kwargs) -> User:
+        async with self.accounts:
+            credential = await self.accounts.credentials.read(**kwargs)
+            if credential:
+                user = User(account = Account(id = credential.id))
+                self.collection.add(user)
+                return user

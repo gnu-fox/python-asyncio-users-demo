@@ -6,7 +6,7 @@ from pydantic import EmailStr
 from src.users.models import Event
 
 class UserCreated(Event):
-    id : UUID
-    username : Optional[str]
-    password : Optional[SecretStr]
-    email : Optional[EmailStr]
+    id : Optional[UUID] = None
+    username : Optional[str] = None
+    password : Optional[SecretStr] = None
+    email : Optional[EmailStr] = None
