@@ -7,7 +7,7 @@ from sqlalchemy import func
 
 Schema = declarative_base()
 
-class Accounts(Schema):
+class AccountSchema(Schema):
     __tablename__ = 'accounts'
     id = Column(UUID, primary_key=True)
     username = Column(String(50), unique=True)
