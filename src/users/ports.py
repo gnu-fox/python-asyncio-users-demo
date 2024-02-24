@@ -44,7 +44,7 @@ T = TypeVar('T')
 class Factory(ABC, Generic[T]):
 
     @abstractmethod
-    def create(self) -> T:
+    def __call__(self) -> T:
         pass
 
 
@@ -66,7 +66,6 @@ class Credentials(ABC):
     async def delete(self, credential : Credential):
         ...
 
-
 class UnitOfWork(ABC):
     
     @abstractmethod
@@ -76,6 +75,11 @@ class UnitOfWork(ABC):
     @abstractmethod
     async def __aexit__(self, exc_type : Any, exc_value : Any, traceback : Any):
         ...
+
+    @abstractmethod
+    async def commit(self):
+        ...
+        
 
 class Accounts(UnitOfWork):
 

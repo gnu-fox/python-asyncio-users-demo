@@ -8,7 +8,6 @@ from src.users.auth.protocols import Accounts
 from src.users.auth import services as auth
 from src.users import events, commands
 
-
 T = TypeVar('T', bound=Union[Event, Command])
 class Handler(ABC, Generic[T]):
 

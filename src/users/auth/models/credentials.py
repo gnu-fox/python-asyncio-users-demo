@@ -15,6 +15,7 @@ class Credential(BaseModel):
     username : str = Field(default=None, alias="username", description="The username of the Account")
     email : EmailStr = Field(default=None, alias="email", description="The email of the Account")
     password : SecretStr = Field(default=None, alias="password", description="The password of the Account")
+    hash : bool = False
 
     @field_serializer('password', when_used='always')
     def reveal(secret : SecretStr) -> str:
@@ -22,7 +23,7 @@ class Credential(BaseModel):
     
     def hash_password(self):
         self.password = Security.hash(self.password)
-
+    
     def verify_password(self, password : Union[str, SecretStr]) -> bool:
         return Security.verify(password, self.password)
     
