@@ -5,7 +5,7 @@ from uuid import uuid4
 from sqlalchemy import URL
 from sqlalchemy import select, insert, update, delete
 
-from src.users.models import Credential
+from src.users.auth.models.credentials import Credential
 from src.adapters.database_schemas import AccountSchema
 from src.adapters.data_access_objects import SQLAlchemyCredentials
 from src.adapters.units_of_work import SessionFactory

@@ -1,5 +1,4 @@
 from uuid import UUID
-from datetime import timedelta
 from typing import Deque
 from collections import deque
 
@@ -16,10 +15,6 @@ class Account:
     id : UUID = Field(..., alias='id', description="The UUID of the Account")
     events : Deque[Event] = deque()
     saved : bool = False
-
-    def create_token(self, timedelta : timedelta = timedelta(minutes=15)) -> Token:
-        claim = Claim(sub=self.id, exp=timedelta)
-        return Tokenizer.encode(claim)
 
     def __eq__(self, __value: object) -> bool:
         if isinstance(__value, self.__class__):

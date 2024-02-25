@@ -34,7 +34,8 @@ class Application:
 
     async def publish(self, command: Command):
         try:
-            await self.publishers[type(command)](command)
+            handler = self.publishers[type(command)]
+            await handler(command)
             self.queue.extend(self.repository.collect_events())
         except Exception:
             raise
@@ -55,7 +56,7 @@ class Factory(ABC, Generic[T]):
         pass
 
 
-def create_accounts_uow(settings : Settings) -> Accounts:
+def accounts_uow(settings : Settings) -> Accounts:
     return settings.accounts_backend(**settings.accounts_backend_args)
 
 class Users:
@@ -65,28 +66,24 @@ class Users:
         self.settings = settings
         self.collection = self.repository.collection
         self.application : Application = Application(repository=self.repository)
-        self.application.publishers[commands.StartApplication] = handlers.Start()
-        self.application.consumers[events.UserCreated] = [handlers.CreateAccount(accounts=create_accounts_uow(settings))]
+        self.application.publishers[commands.CreateAccount] = handlers.CreateAccount(accounts=accounts_uow(settings))
 
     async def __aenter__(self):
-        self.accounts = create_accounts_uow(self.settings)
-        await self.accounts.__aenter__()
         return self
     
     async def __aexit__(self, exc_type, exc_value, traceback):
-        self.application.queue.extend(self.repository.collect_events())
-        await self.application.handle(commands.StartApplication())
-        await self.accounts.__aexit__(exc_type, exc_value, traceback)
+        pass
 
     async def create(self, **kwargs) -> User:
         account = Account(id = uuid.uuid4())
-        account.events.append(events.UserCreated(**kwargs))
+        await self.application.handle(commands.CreateAccount(id=account.id, **kwargs))
         self.collection.add(account)
         return User(account=account)
     
     async def read(self, **kwargs) -> User:
-        async with self.accounts:
-            credential = await self.accounts.credentials.read(**kwargs)
+        accounts = accounts_uow(self.settings)
+        async with accounts:
+            credential = await accounts.credentials.read(**kwargs)
             if credential:
                 account = Account(id = credential.id)
                 self.collection.add(account)

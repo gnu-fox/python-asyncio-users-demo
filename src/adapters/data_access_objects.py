@@ -3,8 +3,8 @@ from typing import Optional
 from sqlalchemy import insert, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.users.models import Credential
 from src.users.auth.ports import Credentials
+from src.users.auth.models.credentials import Credential
 from src.adapters.database_schemas import AccountSchema
 
 class SQLAlchemyCredentials(Credentials):

@@ -1,15 +1,9 @@
-from uuid import uuid4
 from uuid import UUID
-from datetime import datetime
-from typing import Deque
-from collections import deque
+from datetime import timedelta
 
-from pydantic import BaseModel
-from pydantic import Field
-
-from src.users.ports import Event
 from src.users.auth.models.accounts import Account
-from src.users.auth.models.credentials import Credential
+from src.users.auth.models.tokens import Token, Claim
+from src.users.auth.models.tokens import Tokenizer
 
 class User:
     def __init__(self, account : Account):
@@ -21,3 +15,7 @@ class User:
     @property
     def id(self) -> UUID:
         return self.account.id
+
+    def create_token(self, timedelta : timedelta = timedelta(minutes=15)) -> Token:
+        claim = Claim(sub=self.id, exp=timedelta)
+        return Tokenizer.encode(claim)

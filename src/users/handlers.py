@@ -15,12 +15,12 @@ class Handler(ABC, Generic[T]):
     async def __call__(self, message : T):
         pass
 
-class CreateAccount(Handler[events.UserCreated]):
+class CreateAccount(Handler[commands.CreateAccount]):
     def __init__(self, accounts : Accounts):
         self.accounts = accounts
 
-    async def __call__(self, event : events.UserCreated):
-        credential = Credential(**event.model_dump())
+    async def __call__(self, command : commands.CreateAccount):
+        credential = Credential(**command.model_dump(exclude='metadata', exclude_none=True))
         await auth.register(credential=credential, accounts=self.accounts)
 
 

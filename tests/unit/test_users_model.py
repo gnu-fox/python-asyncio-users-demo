@@ -17,7 +17,7 @@ async def test_users(settings : Settings):
 
     LOGGER.info('Testing users')
     async with Users(settings=settings) as users:
-        user = await users.create(username = 'test', password = 'test')
+        user = await users.create(username = 'testmodel', password = 'testmodel')
         user.save()
 
     user_id = user.id
@@ -25,7 +25,7 @@ async def test_users(settings : Settings):
 
     users = Users(settings=settings)
     async with users:
-        user = await users.read(username = 'test')
+        user = await users.read(username = 'testmodel')
         LOGGER.info(f'Retrieved user with id: {user.id} of type: {type(user.id)}')
         assert user
 
@@ -34,5 +34,5 @@ async def test_users(settings : Settings):
         assert user
 
     async with users:
-        user = await users.read(username = 'test22')
+        user = await users.read(username = 'testmodel22')
         assert not user
