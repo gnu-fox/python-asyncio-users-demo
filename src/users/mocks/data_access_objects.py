@@ -2,7 +2,7 @@ import logging
 
 from src.users.mocks.database_session import Session
 from src.users.auth.models.credentials import Credential
-from src.users.ports import Credentials
+from src.users.auth.ports import Credentials
 
 LOGGER = logging.getLogger(__name__)
 

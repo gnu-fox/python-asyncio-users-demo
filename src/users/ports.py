@@ -1,14 +1,26 @@
 from abc import ABC, abstractmethod
+from uuid import uuid4
+from uuid import UUID
+from datetime import datetime
 from typing import Set
 from typing import Generator
 from typing import Protocol
 from typing import TypeVar, Generic
-from typing import Any
 from typing import Deque
-from typing import Optional
 
-from src.users.models import Event
-from src.users.auth.models.credentials import Credential
+from pydantic import BaseModel
+from pydantic import Field
+
+class Metadata(BaseModel):
+    type : str = Field(description="The type of message.")
+    id : UUID = Field(default_factory=uuid4, description="The unique identifier for the message.")
+    timestamp : datetime = Field(default_factory=datetime.now, description="The time the message was created.")
+
+class Event(BaseModel):
+    metadata : Metadata = Metadata(type="event")
+
+class Command(BaseModel):
+    metadata : Metadata = Metadata(type="command")
 
 class Aggregate(Protocol):
     id : str
@@ -46,42 +58,3 @@ class Factory(ABC, Generic[T]):
     @abstractmethod
     def __call__(self) -> T:
         pass
-
-
-class Credentials(ABC):
-
-    @abstractmethod
-    async def create(self, credential : Credential):
-        ...
-
-    @abstractmethod
-    async def read(self, **kwargs) -> Optional[Credential]: 
-        ...
-
-    @abstractmethod
-    async def update(self, credential : Credential):
-        ...
-
-    @abstractmethod
-    async def delete(self, credential : Credential):
-        ...
-
-class UnitOfWork(ABC):
-    
-    @abstractmethod
-    async def __aenter__(self):
-        ...
-
-    @abstractmethod
-    async def __aexit__(self, exc_type : Any, exc_value : Any, traceback : Any):
-        ...
-
-    @abstractmethod
-    async def commit(self):
-        ...
-        
-
-class Accounts(UnitOfWork):
-
-    def __init__(self):
-        self.credentials : Credentials

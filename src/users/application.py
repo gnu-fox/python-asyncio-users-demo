@@ -7,14 +7,14 @@ from typing import List
 from typing import Union
 from collections import deque
 
+from src.users.auth.ports import Accounts
 from src.users.settings import Settings
-from src.users.models import Event, Command
 from src.users.models import User, Account
+from src.users.ports import Event, Command
 from src.users.ports import Repository
 from src.users import events
 from src.users import commands
 from src.users import handlers
-from src.users.auth.protocols import Accounts
 
 class Application:
     def __init__(self, repository : Repository):
@@ -59,7 +59,7 @@ def create_accounts_uow(settings : Settings) -> Accounts:
     return settings.accounts_backend(**settings.accounts_backend_args)
 
 class Users:
-    repository : Repository[User] = Repository(collection=set())
+    repository : Repository[Account] = Repository(collection=set())
 
     def __init__(self, settings : Settings):
         self.settings = settings
@@ -80,15 +80,14 @@ class Users:
 
     async def create(self, **kwargs) -> User:
         account = Account(id = uuid.uuid4())
-        user = User(account=account)
-        user.events.append(events.UserCreated(**kwargs))
-        self.collection.add(user)
-        return user
+        account.events.append(events.UserCreated(**kwargs))
+        self.collection.add(account)
+        return User(account=account)
     
     async def read(self, **kwargs) -> User:
         async with self.accounts:
             credential = await self.accounts.credentials.read(**kwargs)
             if credential:
-                user = User(account = Account(id = credential.id))
-                self.collection.add(user)
-                return user
+                account = Account(id = credential.id)
+                self.collection.add(account)
+                return User(account=account)

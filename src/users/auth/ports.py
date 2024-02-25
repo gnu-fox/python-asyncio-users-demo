@@ -5,20 +5,23 @@ from typing import Any
 
 from src.users.auth.models.credentials import Credential
 
-class Credentials(Protocol):
+class Credentials(ABC):
 
+    @abstractmethod
     async def create(self, credential : Credential):
         ...
 
+    @abstractmethod
     async def read(self, **kwargs) -> Optional[Credential]: 
         ...
 
+    @abstractmethod
     async def update(self, credential : Credential):
         ...
 
+    @abstractmethod
     async def delete(self, credential : Credential):
         ...
-
 
 class Accounts(Protocol):
     credentials : Credentials

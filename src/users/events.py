@@ -3,7 +3,7 @@ from uuid import UUID
 from pydantic import SecretStr
 from pydantic import EmailStr
 
-from src.users.models import Event
+from src.users.ports import Event
 
 class UserCreated(Event):
     id : Optional[UUID] = None

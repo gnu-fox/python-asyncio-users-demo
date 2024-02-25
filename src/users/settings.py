@@ -8,7 +8,7 @@ from pydantic import computed_field
 from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
-from src.users.ports import Accounts
+from src.users.auth.ports import Accounts
 from src.users.mocks.units_of_work import MockAccounts
 
 class Settings(BaseSettings):
